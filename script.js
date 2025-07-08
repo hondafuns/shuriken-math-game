@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const quizBGM = document.getElementById('quiz-bgm');
     const correctSound = document.getElementById('correct-sound');
     const incorrectSound = document.getElementById('incorrect-sound');
+    const secondChanceMessage = document.getElementById('second-chance-message');
+    const lastChanceMessage = document.getElementById('last-chance-message');
     const finalScoreOverlay = document.getElementById('final-score-overlay');
     const finalScoreEl = document.getElementById('final-score');
     const retryButton = document.getElementById('retry-button');
@@ -33,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let score = 0;
     let shurikenCount = 0;
     let animationFrameId; 
+    let attemptsLeft = 2; // 2 attempts: 1st try, 2nd chance, 3rd (last) chance
 
     const target = { x: logicalWidth / 2, y: 80, radius: 40, dx: 2 };
     const launcher = { x: logicalWidth / 2, y: logicalHeight * 0.8, angle: 0 };
@@ -61,6 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Quiz Logic ---
     function generateQuestion() {
+        secondChanceMessage.classList.add('hidden'); // Hide second chance message
+        lastChanceMessage.classList.add('hidden'); // Hide last chance message
+        attemptsLeft = 2; // Reset attempts for new question
         const operators = ['+', '-', '*', '/'];
         operator = operators[Math.floor(Math.random() * operators.length)];
 
@@ -113,15 +119,37 @@ document.addEventListener('DOMContentLoaded', () => {
             correctAnswers++;
             correctSound.currentTime = 0;
             correctSound.play().catch(e => console.error("Correct Sound Playback Failed:", e));
+            secondChanceMessage.classList.add('hidden'); // Hide messages on correct answer
+            lastChanceMessage.classList.add('hidden');
+            currentQuestion++;
+            if (currentQuestion < totalQuestions) {
+                generateQuestion();
+            } else {
+                endQuiz();
+            }
         } else {
             incorrectSound.currentTime = 0;
             incorrectSound.play().catch(e => console.error("Incorrect Sound Playback Failed:", e));
-        }
-        currentQuestion++;
-        if (currentQuestion < totalQuestions) {
-            generateQuestion();
-        } else {
-            endQuiz();
+            attemptsLeft--;
+
+            if (attemptsLeft === 1) {
+                secondChanceMessage.classList.remove('hidden');
+                lastChanceMessage.classList.add('hidden');
+            } else if (attemptsLeft === 0) {
+                secondChanceMessage.classList.add('hidden');
+                lastChanceMessage.classList.remove('hidden');
+            } else { // No more chances, move to next question
+                secondChanceMessage.classList.add('hidden');
+                lastChanceMessage.classList.add('hidden');
+                currentQuestion++;
+                if (currentQuestion < totalQuestions) {
+                    generateQuestion();
+                } else {
+                    endQuiz();
+                }
+            }
+            quizAnswerEl.value = ''; // Clear answer for retry
+            quizAnswerEl.focus();
         }
     }
 

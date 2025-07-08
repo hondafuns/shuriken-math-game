@@ -106,6 +106,29 @@ h1 {
     border-radius: 10px;
 }
 
+#second-chance-message {
+    color: #D32F2F; /* Red */
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#last-chance-message {
+    color: #FF0000; /* Bright Red for urgency */
+    font-size: 1.8em;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    animation: pulse 1s infinite; /* Add a pulsing animation */
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
 #quiz-submit {
     width: 85%;
     padding: 15px;
