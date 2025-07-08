@@ -36,7 +36,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const launcher = { x: logicalWidth / 2, y: logicalHeight * 0.8, angle: 0 };
     const shurikens = [];
     const shurikenImage = new Image();
-    shurikenImage.src = 'kunai_syuri.png';
+    shurikenImage.src = 'yari.png';
+
+    const backgroundImage = new Image();
+    backgroundImage.src = 'yukimura.PNG';
+    let backgroundOffsetY = 0; // For jump animation
+    let jumpDirection = 1; // 1 for up, -1 for down
 
     // --- Audio Unlock Logic ---
     function unlockAndLoadAudio() {
@@ -131,8 +136,15 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.save();
         ctx.translate(x, y);
         ctx.rotate(angle);
-        const size = 120;
-        ctx.drawImage(shurikenImage, -size / 2, -size / 2, size, size);
+
+        // Calculate dimensions maintaining aspect ratio
+        const originalWidth = shurikenImage.naturalWidth;
+        const originalHeight = shurikenImage.naturalHeight;
+        const targetHeight = 150; // Desired height for the spear
+        const aspectRatio = originalWidth / originalHeight;
+        const targetWidth = targetHeight * aspectRatio;
+
+        ctx.drawImage(shurikenImage, -targetWidth / 2, -targetHeight / 2, targetWidth, targetHeight);
         ctx.restore();
     }
 
@@ -159,16 +171,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function drawLauncher() {
-        ctx.globalAlpha = 0.5;
+        ctx.globalAlpha = 0.8; // Increased alpha for more opacity
         drawSingleShuriken(launcher.x, launcher.y, launcher.angle);
         ctx.globalAlpha = 1.0;
-        launcher.angle += 0.02;
     }
 
     function updateShurikens() {
         shurikens.forEach((shuriken, index) => {
             shuriken.y -= 7;
-            shuriken.angle += 0.2;
+            // shuriken.angle += 0.2; // Rotation speed - Removed
             if (shuriken.y < -20) {
                 shurikens.splice(index, 1);
             }
@@ -199,6 +210,26 @@ document.addEventListener('DOMContentLoaded', () => {
     function gameLoop() {
         requestAnimationFrame(gameLoop);
         ctx.clearRect(0, 0, logicalWidth, logicalHeight); 
+
+        // 背景画像を描画
+        if (backgroundImage.complete) {
+            const originalWidth = backgroundImage.naturalWidth;
+            const originalHeight = backgroundImage.naturalHeight;
+            const targetHeight = logicalHeight * 0.6; // 枠の6割の高さ (元の3割の2倍)
+            const aspectRatio = originalWidth / originalHeight;
+            const targetWidth = targetHeight * aspectRatio;
+
+            const imgX = logicalWidth - targetWidth; // 右端に配置
+            const imgY = logicalHeight - targetHeight + backgroundOffsetY; // 下端に配置 + ジャンプオフセット
+            ctx.drawImage(backgroundImage, imgX, imgY, targetWidth, targetHeight);
+
+            // ジャンプアニメーションの更新
+            backgroundOffsetY += jumpDirection * 0.5; // ジャンプ速度
+            if (backgroundOffsetY > 10 || backgroundOffsetY < 0) { // ジャンプの高さと着地
+                jumpDirection *= -1;
+            }
+        }
+
         drawTarget();
         updateTarget();
         drawLauncher();
