@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>手裏剣ゲーム</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <img src="kunai_syuri.png" alt="Shuriken Icon" id="title-shuriken-icon">
+    <h1>手裏剣算術</h1>
+
+    <div id="quiz-container">
+        <div id="quiz-box">
+            <h2 id="quiz-title">正解して<br>手裏剣をゲット！</h2>
+            <p id="quiz-question">1 + 1 = ?</p>
+            <input type="number" id="quiz-answer" autofocus>
+            <button id="quiz-submit">回答</button>
+        </div>
+    </div>
+
+    <div id="game-info-bar" class="hidden">
+        <div id="score-container" class="info-box">
+            <p>スコア</p>
+            <span id="score">0</span>
+        </div>
+        <div id="shuriken-container" class="info-box">
+            <p>手裏剣</p>
+            <span id="shuriken-count">10</span>
+        </div>
+    </div>
+
+    <div id="game-container" class="hidden">
+        <canvas id="game-canvas" width="800" height="600"></canvas>
+        <div id="popup-container" class="hidden">
+            <img src="IMG_9423.png" alt="Effect">
+            <div class="speech-bubble">ぷぅ！</div>
+        </div>
+    </div>
+
+    <audio id="bgm" src="game_bgm.mp3" loop></audio>
+    <audio id="hit-sound" src="hit_effect.mp3"></audio>
+    <audio id="quiz-bgm" src="quiz_bgm.mp3" loop></audio>
+
+    <div id="final-score-overlay" class="hidden">
+        <div class="final-score-box">
+            <p>ゲーム終了！</p>
+            <p>あなたのスコア:</p>
+            <span id="final-score">0</span>
+            <button id="retry-button">もう一度！</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
