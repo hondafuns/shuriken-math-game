@@ -51,7 +51,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Audio Unlock Logic ---
     function unlockAndLoadAudio() {
         if (audioUnlocked) return;
-        const audioElements = [bgm, hitSound, quizBGM, correctSound, incorrectSound];
+        // bgmとquizBGMのみをアンロック
+        const audioElements = [bgm, quizBGM];
         audioElements.forEach(audio => {
             audio.play().then(() => {
                 audio.pause();
@@ -91,11 +92,16 @@ document.addEventListener('DOMContentLoaded', () => {
         quizQuestionEl.textContent = `${num1} ${operator} ${num2} = ?`;
         quizAnswerEl.value = '';
         quizAnswerEl.focus();
-        quizBGM.play().catch(e => console.error("Quiz BGM Playback Failed (generateQuestion):", e));
+        // quizBGM.play().catch(e => console.error("Quiz BGM Playback Failed (generateQuestion):", e)); // Removed
     }
 
     function handleAnswer() {
         unlockAndLoadAudio();
+        // ユーザーが回答ボタンを押した後にクイズBGMを再生開始
+        if (audioUnlocked && quizBGM.paused) {
+            quizBGM.play().catch(e => console.error("Quiz BGM Playback Failed (handleAnswer):", e));
+        }
+
         if (quizAnswerEl.value === '') return;
         const userAnswer = parseInt(quizAnswerEl.value, 10);
         let correctAnswer;
@@ -307,19 +313,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Game Reset Logic ---
     function resetGame() {
+        // Stop any ongoing game loop before resetting
+        if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null; // Clear the ID after cancelling
+        }
+
+        // Reset game state
         score = 0;
         shurikenCount = 0;
-        shurikens.length = 0; 
+        shurikens.length = 0; // Clear shurikens array
         currentQuestion = 0;
         correctAnswers = 0;
 
+        // Reset UI
         scoreEl.textContent = score;
         shurikenCountEl.textContent = shurikenCount;
-        finalScoreOverlay.classList.add('hidden');
-        gameContainer.classList.add('hidden');
-        gameInfoBar.classList.add('hidden'); 
-        quizContainer.classList.remove('hidden');
 
+        // 明示的にdisplayスタイルを設定し、hiddenクラスも操作
+        finalScoreOverlay.classList.add('hidden');
+        finalScoreOverlay.style.display = 'none';
+
+        gameContainer.classList.add('hidden');
+        gameContainer.style.display = 'none';
+
+        gameInfoBar.classList.add('hidden');
+        gameInfoBar.style.display = 'none';
+
+        quizContainer.classList.remove('hidden');
+        quizContainer.style.display = 'flex'; // quizContainerの元のdisplayスタイルに合わせてください
+
+        console.log("resetGame: UI elements visibility updated.");
+        console.log("resetGame: finalScoreOverlay display:", finalScoreOverlay.style.display, "hidden class:", finalScoreOverlay.classList.contains('hidden'));
+        console.log("resetGame: gameContainer display:", gameContainer.style.display, "hidden class:", gameContainer.classList.contains('hidden'));
+        console.log("resetGame: gameInfoBar display:", gameInfoBar.style.display, "hidden class:", gameInfoBar.classList.contains('hidden'));
+        console.log("resetGame: quizContainer display:", quizContainer.style.display, "hidden class:", quizContainer.classList.contains('hidden'));
+
+        // Start new quiz
         generateQuestion();
     }
 
