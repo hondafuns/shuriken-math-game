@@ -313,44 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Game Reset Logic ---
     function resetGame() {
-        // Stop any ongoing game loop before resetting
-        if (animationFrameId) {
-            cancelAnimationFrame(animationFrameId);
-            animationFrameId = null; // Clear the ID after cancelling
-        }
-
-        // Reset game state
-        score = 0;
-        shurikenCount = 0;
-        shurikens.length = 0; // Clear shurikens array
-        currentQuestion = 0;
-        correctAnswers = 0;
-
-        // Reset UI
-        scoreEl.textContent = score;
-        shurikenCountEl.textContent = shurikenCount;
-
-        // 明示的にdisplayスタイルを設定し、hiddenクラスも操作
-        finalScoreOverlay.classList.add('hidden');
-        finalScoreOverlay.style.display = 'none';
-
-        gameContainer.classList.add('hidden');
-        gameContainer.style.display = 'none';
-
-        gameInfoBar.classList.add('hidden');
-        gameInfoBar.style.display = 'none';
-
-        quizContainer.classList.remove('hidden');
-        quizContainer.style.display = 'flex'; // quizContainerの元のdisplayスタイルに合わせてください
-
-        console.log("resetGame: UI elements visibility updated.");
-        console.log("resetGame: finalScoreOverlay display:", finalScoreOverlay.style.display, "hidden class:", finalScoreOverlay.classList.contains('hidden'));
-        console.log("resetGame: gameContainer display:", gameContainer.style.display, "hidden class:", gameContainer.classList.contains('hidden'));
-        console.log("resetGame: gameInfoBar display:", gameInfoBar.style.display, "hidden class:", gameInfoBar.classList.contains('hidden'));
-        console.log("resetGame: quizContainer display:", quizContainer.style.display, "hidden class:", quizContainer.classList.contains('hidden'));
-
-        // Start new quiz
-        generateQuestion();
+        window.location.reload(); // Reload the page to reset the game
     }
 
     // --- Canvas Resizing ---
